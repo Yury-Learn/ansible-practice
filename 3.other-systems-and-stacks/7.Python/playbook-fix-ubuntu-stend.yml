@@ -1,0 +1,144 @@
+---
+- name: "Pip venv"
+  hosts: "ubuntu"
+  become: true
+  vars:
+    app_name: "hello"
+    mysql_password: "password"
+    service_user: "root"
+    service_group: "www-data"
+
+
+  tasks:
+    - name: "Copy python files"
+      ansible.builtin.copy:
+        src: files/app
+        dest: /apps/{{app_name}}
+      vars:
+        ansible_python_interpreter: /usr/bin/python2
+
+    - name: "Installing python3"
+      ansible.builtin.apt:
+        name: python3
+        update_cache: true
+      vars:
+        ansible_python_interpreter: /usr/bin/python2
+
+    - name: Install python deps
+      ansible.builtin.apt:
+        name:
+          - python3-pip
+          - python3-setuptools
+          - python3-venv
+          - python3-pymysql
+        state: latest
+        update_cache: True
+      vars:
+        ansible_python_interpreter: /usr/bin/python2
+
+    - name: Install virtualenv via pip
+      pip:
+        name: virtualenv
+        executable: pip3
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+
+    - name: Install requirements
+      pip:
+        requirements: /apps/{{app_name}}/app/requirements.txt
+        virtualenv: /apps/{{app_name}}/venv
+        virtualenv_command: /usr/bin/python3 -m venv
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+
+    - name: Change ownership of a directory
+      ansible.builtin.file:
+        path: /apps
+        state: directory
+        recurse: yes
+        owner: "{{ service_user }}"
+        group: "{{ service_group }}"
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+
+    - name: Copy service file
+      ansible.builtin.template:
+        src: service.service.j2
+        dest: /etc/systemd/system/{{app_name}}.service
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+
+    - name: "Install mysql"
+      ansible.builtin.apt:
+        name: mariadb-server
+        update_cache: yes
+        state: latest
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+
+    - name: "Start mariadb"
+      service:
+        name: mariadb
+        state: started
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+
+    - name: "Print password"
+      debug:
+        msg: "{{ mysql_password }}"
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+
+    - name: Create `/root/.my.cnf`  with root password credentials
+      template:
+        src: files/my.cnf.j2
+        dest: /root/.my.cnf
+        owner: root
+        mode: 0600
+      become: yes
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+
+    - name: "Start mariadb"
+      service:
+        name: mariadb
+        state: restarted
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+
+    - name: Ensure mysql root password is updated for all root accounts
+      mysql_user:
+        name: root
+        host: "localhost"
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        password: "{{ mysql_password }}"
+        priv: '*.*:ALL,GRANT'
+        check_implicit_admin: true
+      become: yes
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+
+    - name: "Start mariadb"
+      service:
+        name: mariadb
+        state: restarted
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+
+    - name: "Add the MySQL database"
+      community.mysql.mysql_db:
+        name: service_db
+        state: present
+        login_user: "root"
+        login_password: "{{ mysql_password }}"
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        check_implicit_admin: true
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+
+    - name: "Start service"
+      service:
+        name: "{{ app_name }}"
+        state: started
+      vars:
+        ansible_python_interpreter: /usr/bin/python3

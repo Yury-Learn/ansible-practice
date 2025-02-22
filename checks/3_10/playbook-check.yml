@@ -1,0 +1,40 @@
+#################
+# LEMP CHECK PLAYBOOK #
+#################
+---
+- name: "localcheck"
+  hosts: 'all,!default' 
+  become: true # становимся привилегированным пользователем
+  gather_facts: false
+  tasks: # список тасков
+
+    - name: Checking if website is available and has contents
+      ansible.builtin.uri:
+        url: http://localhost
+        method: GET
+        status_code: 200
+        return_content: true
+      register: local_contents
+      failed_when: "local_contents.status != 200 or 'Choosing an Apple' not in local_contents.content"
+
+- name: remotecheck
+  hosts: 'all,!default' 
+  connection: local
+  tasks:
+    - name: Show all the hosts in the inventory
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+      loop: "{{ ansible_play_hosts_all }}"
+
+    - name: Checking if website is available and has contents 
+      ansible.builtin.uri:
+        url: "http://{{ item }}"
+        method: GET
+        status_code: 200
+        return_content: true
+        headers:
+          Host: "php-test.com"
+      register: remote_contents
+      failed_when: "remote_contents.status != 200 or 'Choosing an Apple' not in remote_contents.content"
+      with_items: 
+        - "{{ hostvars[inventory_hostname].ansible_host }}"

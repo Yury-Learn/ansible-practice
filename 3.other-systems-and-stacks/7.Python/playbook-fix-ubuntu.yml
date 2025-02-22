@@ -1,0 +1,56 @@
+---
+- name: "Pip venv"
+  hosts: all
+  become: true
+  vars:
+    app_name: "hello"
+    mysql_password: "password"
+    ansible_pythonr_interpreter: /usr/bin/python3.12
+  tasks:
+  - name: custom, create path
+    ansible.builtin.file: 
+      path: "/apps"
+      state: directory
+  
+
+  - name: "Copy python files"
+    ansible.builtin.copy:
+      src: files/app
+      dest: /apps/{{app_name}}
+
+
+  - name: "custom, install packages"
+    ansible.builtin.apt:
+      name: "{{ item }}"
+      state: present
+      update_cache: yes
+    loop:    
+      - python3
+      - python3-full
+      - pip
+      - python3-pymysql
+      - mysql-client
+      - mysql-server
+  
+  - name: Install requirements
+    ansible.builtin.pip:
+      requirements: /apps/{{app_name}}/app/requirements.txt
+      virtualenv: /apps/{{app_name}}/venv
+      virtualenv_command: /usr/bin/python3 -m venv
+
+  - name: Copy service file
+    ansible.builtin.template:
+      src: service.service.j2
+      dest: /etc/systemd/system/{{app_name}}.service
+
+  - name: "Add the MySQL database"
+    community.mysql.mysql_db:
+      name: service_db
+      state: present
+      login_unix_socket: /var/run/mysqld/mysqld.sock
+      login_user: root
+
+  - name: "Start service"
+    service:
+      name: "{{ app_name }}"
+      state: started

@@ -1,0 +1,29 @@
+---
+- name: Create
+  hosts: 'all,!default' 
+  gather_facts: false
+  become: true
+  
+  pre_tasks:
+    - name: "Install python3"
+      ansible.builtin.raw: "apt update && apt install -y python3"
+
+  tasks:
+    - name: Replace a localhost entry searching for a literal string to avoid escaping
+      delegate_to: localhost
+      shell: "echo {{ ansible_host }} {{ inventory_hostname }} >> /etc/hosts"
+
+    - name: Create group vagrant
+      group:
+        name: "vagrant"
+        state: present
+
+    - name: Add the user 'vagrant' with a primary group of 'sudo'
+      ansible.builtin.user:
+        name: vagrant
+        password: "{{ 'vagrant' | password_hash('sha512')}}"
+        groups: sudo, vagrant
+
+    # - name: show attr
+    #   debug: 
+    #     msg: "{{inventory_hostname}} {{ansible_host}} {{ansible_ssh_user | default('defaultUser')}} {{ansible_port | default('22') }} {{ansible_ssh_pass | default('defaultPassword') }} "

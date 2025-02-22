@@ -1,0 +1,20 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+    config.vm.box = "ubuntu/focal64"
+    config.vm.box_url = "https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64-vagrant.box"
+ 
+    config.vm.host_name = "third"
+    config.vm.network "private_network", ip:"192.168.56.203"
+
+    config.vm.box_check_update = false
+    
+    config.vm.provision "shell", inline: <<-SHELL
+        sed -i 's/Include/#Include/' /etc/ssh/sshd_config
+        sed -i 's/#PasswordAuthentication/PasswordAuthentication/' /etc/ssh/sshd_config
+        sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+        sudo service sshd restart
+    SHELL
+end

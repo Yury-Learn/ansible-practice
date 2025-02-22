@@ -1,0 +1,11 @@
+---
+platforms:
+  - name: default
+
+provisioner:
+  name: ansible
+  log: True          
+  inventory:
+    links:
+      hosts: ../../hosts.ini
+

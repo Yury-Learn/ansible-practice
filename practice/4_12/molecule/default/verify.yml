@@ -1,0 +1,36 @@
+#################
+# HELLO SERVICE CHECK PLAYBOOK #
+#################
+
+#check mysql is installed
+#check mysql is running
+#check hello service is running
+---
+- name: Verify
+  hosts: 'ubuntu' 
+  vars:
+    mysql_password: "password"
+    ansible_python_interpreter: /usr/bin/python3
+  gather_facts: false
+  become: true
+  tasks:
+
+    - name: "Check if mysql is installed"
+      mysql_info:
+        login_user: root
+        login_password: "{{ mysql_password }}"
+      register: mysql_info
+      failed_when: mysql_info.version is not defined
+
+    - name: "Show version MySQL"
+      debug: 
+        msg: "MySQL version: {{mysql_info.version.full}}"
+
+    - name: "Get services"
+      ansible.builtin.service_facts:
+
+    - name: "Check status hello.service eq running"
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.services['hello.service'].state == 'running'
+        msg: "Hello service should be running but it is {{ ansible_facts.services['hello.service'].state }}"
