@@ -1,12 +1,5 @@
-- name: "Install epel-release yum"
-  ansible.builtin.yum:
-    name: epel-release
-    update_cache: yes
-    state: latest
-  when: ansible_os_family == "RedHat"
-
-- name: "Install nginx yum"
-  ansible.builtin.yum:
+- name: "Install nginx dnf"
+  ansible.builtin.dnf:
     name: nginx
     update_cache: yes
     state: latest
