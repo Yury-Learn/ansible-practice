@@ -8,12 +8,12 @@
     - nginx
   tasks:
   - name: "Installing python3"
-    ansible.builtin.yum:
+    ansible.builtin.dnf:
       name: python3
       update_cache: true
 
   - name: Install python deps
-    ansible.builtin.yum:
+    ansible.builtin.dnf:
       name:
         - python3-pip
         - python3-setuptools
@@ -58,8 +58,24 @@
       group: vagrant
       mode: 0644
 
+
+  - name: Allow Gunicorn binary execution
+    community.general.sefcontext:
+      target: "/apps/{{app_name}}/venv/bin/gunicorn"
+      setype: bin_t
+      state: present
+
+  - name: Allow app directory for HTTPD read/write access
+    community.general.sefcontext:
+      target: "/apps/{{app_name}}(/.*)?"
+      setype: httpd_sys_rw_content_t
+      state: present
+
+  - name: Apply SELinux context changes
+    command: restorecon -Rv /apps/hello
+
   - name: "Start service"
     service:
       name: "{{ app_name }}"
       state: started
-      
+
