@@ -3,9 +3,7 @@
 ##################################################
 ---
 - name: Basic group
-  # hosts: ubuntu
-  hosts: centos
-  # hosts: centos:ubuntu
+  hosts: centos:ubuntu
   gather_facts: true
   become: true
   vars:
