@@ -33,8 +33,8 @@
     - name: "pre_tasks: Gathering Facts"
       setup:
 
-  # roles:
-    # - nginx
+  roles:
+    - nginx
     # - mysql
     # - php
 
