@@ -1,6 +1,6 @@
 server {
-        listen {{php_nginx_port}};
-        root /var/www/php_test;
+        listen {{ php_nginx_port }};
+        root {{ nginx_redhat_path }};
         index index.php index.html index.htm index.nginx-debian.html;
         server_name php-test.com;
 

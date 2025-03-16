@@ -1,11 +1,11 @@
-- name: "Install epel-release yum"
-  ansible.builtin.yum:
+- name: "Install epel-release"
+  ansible.builtin.dnf:
     name: epel-release
     update_cache: yes
     state: latest
 
-- name: "Install nginx yum"
-  ansible.builtin.yum:
+- name: "Install nginx"
+  ansible.builtin.dnf:
     name: nginx
     update_cache: yes
     state: latest
