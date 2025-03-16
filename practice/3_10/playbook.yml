@@ -33,13 +33,18 @@
     - name: "pre_tasks: Gathering Facts"
       setup:
 
-  roles:
-    - nginx
-    - mysql
-    - php
+  # roles:
+    # - nginx
+    # - mysql
+    # - php
 
   tasks:
-  - name: "Reload nginx"
-    service:
-      name: nginx
-      state: reloaded
+
+  - name: "debug"
+    debug:
+      msg: "{{ ansible_os_family }}"  
+
+  # - name: "Reload nginx"
+    # service:
+      # name: nginx
+      # state: reloaded
