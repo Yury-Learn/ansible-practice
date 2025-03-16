@@ -13,16 +13,16 @@
       delegate_to: localhost
       shell: "echo {{ ansible_host }} {{ inventory_hostname }} >> /etc/hosts"
 
-    - name: Create group vagrant
-      group:
-        name: "vagrant"
-        state: present
+    # - name: Create group vagrant
+    #   group:
+    #     name: "vagrant"
+    #     state: present
 
-    - name: Add the user 'vagrant' with a primary group of 'sudo'
-      ansible.builtin.user:
-        name: vagrant
-        password: "{{ 'vagrant' | password_hash('sha512')}}"
-        groups: sudo, vagrant
+    # - name: Add the user 'vagrant' with a primary group of 'sudo'
+    #   ansible.builtin.user:
+    #     name: vagrant
+    #     password: "{{ 'vagrant' | password_hash('sha512')}}"
+    #     groups: sudo, vagrant
 
     # - name: show attr
     #   debug: 
