@@ -1,23 +1,32 @@
-- name: "Install mysql"
-  ansible.builtin.yum:
-    name: mariadb-server
-    update_cache: yes
+- name: "Install mariadb and Pymysql for python related modules"
+  ansible.builtin.dnf:
+    name:
+      - mariadb-server
+      - python3-PyMySQL
     state: latest
-
-- name: "Installing Pymysql for python related modules"
-  ansible.builtin.yum:
-    name: python2-PyMySQL
     update_cache: yes
-    state: latest
 
 - name: "Start mariadb"
   service:
     name: mariadb
+    enabled: true
     state: started
 
-- name: "Set the root password"
+- name: "Set mysql_root_password"
   community.mysql.mysql_user:
-    name: "root"
-    password: "password"
-    login_password: "password"
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    login_unix_socket: /var/lib/mysql/mysql.sock   
+    name: root
     check_implicit_admin: true
+    password: "{{ mysql_root_password }}"
+    host: localhost
+
+# - name: "Remove remote root"
+#   community.mysql.mysql_user:
+#     check_implicit_admin: true
+#     login_user: root
+#     login_password: "{{ mysql_root_password }}"
+#     name: root
+#     host: "{{ ansible_fqdn }}"
+#     state: absent

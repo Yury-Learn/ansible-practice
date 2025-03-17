@@ -1,2 +1,4 @@
-php_version: 7.4
+php_version: 8.3
 php_nginx_port: 80
+nginx_debian_path: /var/www/html
+nginx_redhat_path: /usr/share/nginx/html

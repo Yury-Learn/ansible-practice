@@ -8,8 +8,6 @@
   ansible.builtin.file:
     path: /var/www/html
     state: directory
-    owner: vagrant
-    group: vagrant
 
 - name: "Delete old folder"
   ansible.builtin.file:
@@ -20,14 +18,9 @@
   ansible.builtin.copy:
     src: files/html
     dest: /var/www/
-    owner: vagrant
-    group: vagrant
-    mode: 0644
+
 
 - name: "replace default config"
   ansible.builtin.template:
     src: files/default.ubuntu.conf.j2
     dest: /etc/nginx/sites-available/default.conf
-    owner: vagrant
-    group: vagrant
-    mode: 0644

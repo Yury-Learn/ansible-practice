@@ -12,7 +12,7 @@
     host_all: yes
     state: absent
     login_user: root
-    login_password: "password"
+    login_password: "{{ mysql_root_password }}"
     check_implicit_admin: true
 
 - name: "Remove the MySQL test database"
@@ -20,5 +20,5 @@
     name: test
     state: absent
     login_user: root
-    login_password: "password"
+    login_password: "{{ mysql_root_password }}"
     check_implicit_admin: true
