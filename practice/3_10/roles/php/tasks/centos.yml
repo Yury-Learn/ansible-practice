@@ -1,18 +1,22 @@
+  # issue: https://github.com/ansible/ansible/issues/71634?ysclid=m8rjnnqkiz735532625
+- rpm_key:
+    state: present
+    key: https://rpms.remirepo.net/RPM-GPG-KEY-remi2021
 
 - name: "Installing Remi Repository"
   ansible.builtin.dnf:
     name:
       - "https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm"
       - "https://rpms.remirepo.net/enterprise/remi-release-9.rpm"
-
-- name: "Installing Remi Repository"
+    
+- name: "Installing Remi packages"
   ansible.builtin.dnf:
     enablerepo: "php:remi-{{ php_version }}" 
     name:
       - "php"
       - "php-cli"
       - "php-fpm"
-      - "php-mysql"
+      - "php-mysqlnd"
     state: latest
     update_cache: yes
 
