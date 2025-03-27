@@ -12,10 +12,10 @@
 
   roles:
     # homework 3.10.1
-    # - nginx
+    - nginx
 
     # homework 3.10.2
-    # - mysql
+    - mysql
     - php
 
   tasks:

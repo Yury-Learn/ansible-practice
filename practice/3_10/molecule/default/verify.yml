@@ -19,6 +19,8 @@
 - name: remotecheck
   hosts: 'all,!default' 
   connection: local
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
   tasks:
     - name: Show all the hosts in the inventory
       ansible.builtin.debug:
