@@ -4,8 +4,6 @@
   become: true
   vars:
     app_name: "hello"
-  roles:
-    - nginx
   tasks:
   - name: "Installing python3"
     ansible.builtin.dnf:
@@ -28,13 +26,16 @@
   vars:
     app_name: "hello"
     ansible_python_interpreter: /usr/bin/python3
+    service_user: "root"
+    app_user_name: "root"
+    service_group: "wheel"
   tasks:
   - name: "Copy python files"
     ansible.builtin.copy:
       src: files/app
       dest: /apps/{{app_name}}
-      owner: vagrant
-      group: vagrant
+      owner: "{{ service_user }}"
+      group: "{{ service_group }}"
       mode: 0644
 
   - name: Install virtualenv via pip
@@ -47,17 +48,17 @@
       requirements: /apps/{{app_name}}/app/requirements.txt
       virtualenv: /apps/{{app_name}}/venv
       virtualenv_command: /usr/bin/python3 -m venv
-    become: false
+    # become: false
 
-
-  - name: Copy service file
-    ansible.builtin.template:
-      src: service.service.j2
-      dest: /etc/systemd/system/{{app_name}}.service
-      owner: vagrant
-      group: vagrant
-      mode: 0644
-
+  - name: Change ownership of a directory
+    ansible.builtin.file:
+      path: /apps
+      state: directory
+      recurse: yes
+      owner: "{{ service_user }}"
+      group: "{{ service_group }}"
+    vars:
+      ansible_python_interpreter: /usr/bin/python3
 
   - name: Allow Gunicorn binary execution
     community.general.sefcontext:
@@ -74,8 +75,16 @@
   - name: Apply SELinux context changes
     command: restorecon -Rv /apps/hello
 
+  - name: Copy service file
+    ansible.builtin.template:
+      src: service.service.j2
+      dest: /etc/systemd/system/{{app_name}}.service
+      owner: "{{ service_user }}"
+      group: "{{ service_group }}"
+      mode: 0644
+
   - name: "Start service"
     service:
       name: "{{ app_name }}"
       state: started
-
+      

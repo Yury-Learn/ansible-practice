@@ -14,7 +14,7 @@
       dest: /apps/{{app_name}}
 
   - name: "Installing python3"
-    ansible.builtin.yum:
+    ansible.builtin.dnf:
       name: python3
       update_cache: true
 

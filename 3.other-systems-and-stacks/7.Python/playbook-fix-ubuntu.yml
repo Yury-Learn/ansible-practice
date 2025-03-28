@@ -1,9 +1,10 @@
 ---
 - name: "Pip venv"
-  hosts: all
+  hosts: ubuntu
   become: true
   vars:
     app_name: "hello"
+    app_user_name: "root"
     mysql_password: "password"
     ansible_pythonr_interpreter: /usr/bin/python3.12
   tasks:

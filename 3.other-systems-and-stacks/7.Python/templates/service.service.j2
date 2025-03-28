@@ -3,9 +3,9 @@ Description=Gunicorn for serving {{app_name}}
 After=network.target
 
 [Service]
-User=vagrant
+User={{app_user_name}}
 {% if ansible_os_family == "RedHat" %}
-Group=nginx
+Group=root
 {% else %}
 Group=www-data
 {% endif %}
