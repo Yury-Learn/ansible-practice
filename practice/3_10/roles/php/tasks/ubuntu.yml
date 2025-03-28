@@ -49,6 +49,6 @@
 - name: "Create a symlink for a new website"
   ansible.builtin.file:
     src: "/etc/nginx/sites-available/default.conf"
-    dest: "/etc/nginx/sites-enabled/default.conf"
+    dest: "/etc/nginx/sites-enabled/default"
     state: link
   when: php_sites_available_stats.stat.exists

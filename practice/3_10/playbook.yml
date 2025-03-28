@@ -1,9 +1,11 @@
 ##################################################
 # LEMP on Ubuntu 20.04
 ##################################################
+# necessary - hosts: host1:host2
+##################################################
 ---
 - name: Basic group
-  hosts: centos:ubuntu
+  hosts: ubuntu:centos
   gather_facts: true
   become: true
   vars:
