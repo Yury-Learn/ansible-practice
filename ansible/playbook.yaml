@@ -37,7 +37,7 @@
 
   - name: "Install pymsql via apt"
     ansible.builtin.apt:
-      name: "python3-pymsql"
+      name: "python3-pymysql"
       state: "latest"
       update_cache: true
 
