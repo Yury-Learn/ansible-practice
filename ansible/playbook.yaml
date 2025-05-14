@@ -4,9 +4,23 @@
 
 - hosts: hosts
   become: true
+
   tasks:
+
   - name: "Install nginx"
     ansible.builtin.apt:
       name: "nginx"
-      state: "latest"
+      state: latest
       update_cache: true
+
+  - name: "Delete /var/www/html"
+    ansible.builtin.file:
+      path: "/var/www/html"
+      state: absent
+
+  - name: "Copy our landing to /var/www/html"
+    ansible.builtin.copy:
+      src: "../2.lemp-ansible/writing_playbook/ansible/files/html"
+      dest: "/var/www/"
+      owner: "ansible_user"
+      group: "ansible_user"
