@@ -7,7 +7,9 @@
 
   tasks:
 
-  - name: "Install nginx"
+  #  NGINX  #
+
+  - name: "Install nginx via apt"
     ansible.builtin.apt:
       name: "nginx"
       state: latest
@@ -24,3 +26,26 @@
       dest: "/var/www/"
       owner: "ansible_user"
       group: "ansible_user"
+
+  #  MYSQL  #
+
+  - name: "Install mysql via apt"
+    ansible.builtin.apt:
+      name: "mysql-server"
+      state: "latest"
+      update_cache: true
+
+  - name: "Install pymsql via apt"
+    ansible.builtin.apt:
+      name: "python3-pymsql"
+      state: "latest"
+      update_cache: true
+
+  - name: "Set up root user"
+    community.mysql.mysql_user: # модуль для управления пользователями
+      name: "s078602" # имя пользователя для редактирования, обратите внимание на единообразие параметров модулей
+      password: "71de306c" # пароль пользователя для редактирования
+      login_user: "s078602" # имя пользователя, под которым вносим изменения
+      login_password: "71de306c" # пароль пользователя под которым редактируем
+      check_implicit_admin: true # сначала попробует зайти без пароля
+      login_unix_socket: "/var/run/mysqld/mysqld.sock" # если mysql работает через сокет, вместо коннекта через порт, то нужен этот путь      
