@@ -63,4 +63,4 @@
       name: "test" # тут это имя базы
       state: "absent" # как и с модулем file - удалить
       login_user: "s078602"
-      login_password: "71de306c"   
+      login_password: "71de306c"
