@@ -56,7 +56,7 @@
       name: "" # анонимные пользователи не имеют имени
       state: "absent" # как и с модулем file - удалить
       login_user: "s078602"
-      login_password: "password"
+      login_password: "71de306c"
 
   - name: "Remove test database"
     community.mysql.mysql_db: # модуль для управления базами данных
