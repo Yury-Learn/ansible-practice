@@ -65,3 +65,14 @@
       state: "absent" # как и с модулем file - удалить
       login_user: "root"
       login_password: "password"
+
+    #  PHP  #    
+
+  - name: "Installing php fpm and php mysql"
+    ansible.builtin.apt:
+      name: "{{ item }}"
+      state: "latest"
+      update_cache: true
+    with_items: 
+      - "php-fpm"
+      - "php-mysql"
